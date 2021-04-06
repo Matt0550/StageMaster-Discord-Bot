@@ -1,7 +1,7 @@
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![GitHub issues](https://img.shields.io/github/issues/Matt0550/StageMaster-Discord-Bot)](https://github.com/Matt0550/StageMaster-Discord-Bot/issues)
 [![GitHub repo size](https://img.shields.io/github/repo-size/Matt0550/StageMaster-Discord-Bot)](https://github.com/Matt0550/StageMaster-Discord-Bot/)
-
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/Matt0550/StageMaster-Discord-Bot/latest/total)
 
 [![GitHub followers](https://img.shields.io/github/followers/Matt0550?style=social)](https://github.com/Matt0550?tab=followers)
 [![GitHub watchers](https://img.shields.io/github/watchers/Matt0550/StageMaster-Discord-Bot?style=social)](https://github.com/Matt0550/StageMaster-Discord-Bot/watchers)
