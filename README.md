@@ -35,6 +35,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 114 and 151)
 
 6. Run the bot
+
 **Remember to enable the "PRESENCE INTENT" and SERVER MEMBERS INTENT**
 # Usage
 For setup bot use `.stage setup` command
