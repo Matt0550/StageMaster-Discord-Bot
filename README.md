@@ -13,7 +13,9 @@
 The original code was taken from the [VoiceMaster bot](https://github.com/SamSanai/VoiceMaster-Discord-Bot) and adapted to my needs.
 
 _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/)_
-
+# Requirements
+- [discord.py](https://pypi.org/project/discord.py/)
+- [validators](https://pypi.org/project/validators/)
 # How to configure the bot:
 
 1. Download python using the following link:
