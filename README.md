@@ -36,7 +36,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 
 6. Run the bot
 
-**Remember to enable the "PRESENCE INTENT" and SERVER MEMBERS INTENT**
+**Remember to enable the "PRESENCE INTENT" and "SERVER MEMBERS INTENT" on [Discord Devolper Portal](https://discord.com/developers/applications/)**
 # Usage
 For setup bot use `.stage setup` command
 
