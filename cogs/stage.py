@@ -8,6 +8,9 @@ import os.path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "stage.db")
+
+OWNER_ID = *** ## INSER HERE YOUR DISCORD ID EXAMPLE: 189378562387913789 (*Random)
+
 class voice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -109,7 +112,7 @@ class voice(commands.Cog):
         c = conn.cursor()
         guildID = ctx.guild.id
         id = ctx.author.id
-        if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 319900799197249548:
+        if ctx.author.id == ctx.guild.owner.id or ctx.author.id == OWNER_ID:
             def check(m):
                 return m.author.id == ctx.author.id
             await ctx.channel.send("**You have 60 seconds to answer each question!**")
@@ -146,7 +149,7 @@ class voice(commands.Cog):
     async def setlimit(self, ctx, num):
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
-        if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 319900799197249548:
+        if ctx.author.id == ctx.guild.owner.id or ctx.author.id == OWNER_ID:
             c.execute("SELECT * FROM guildSettings WHERE guildID = ?", (ctx.guild.id,))
             voice=c.fetchone()
             if voice is None:
