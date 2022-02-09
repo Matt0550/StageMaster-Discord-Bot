@@ -35,7 +35,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 
 4. Open `bot.py` in a text editor and replace `"Insert Discord token here"` with your token bot
 
-5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 114 and 151)
+5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 12)
 
 6. Run the bot
 
