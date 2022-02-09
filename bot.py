@@ -3,25 +3,21 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 import traceback
 import sys
-import sqlite3
 
 bot = commands.Bot(command_prefix=".", intents=discord.Intents.all())
 
 bot.remove_command("help")
 
-DISCORD_TOKEN = 'Insert Discord Token Here'
+DISCORD_TOKEN = 'INSERT DISCORD TOKEN HERE!'
 
 initial_extensions = ['cogs.stage']
-
-bot.conn = sqlite3.connect('stage.db')
-c = bot.conn.cursor()
 
 if __name__ == '__main__':
     for extension in initial_extensions:
         try:
             bot.load_extension(extension)
         except Exception as e:
-            print(f'Failed to load extension {extension}.', file=sys.stderr)
+            print(f'Failed to load extension '+extension, file=sys.stderr)
             traceback.print_exc()
 
 @bot.event
