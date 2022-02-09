@@ -13,7 +13,7 @@
 
 The original code was taken from the [VoiceMaster bot](https://github.com/SamSanai/VoiceMaster-Discord-Bot) and adapted to my needs.
 
-_The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/)_
+_The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/) and it's tested with Python 3.9_
 # Requirements
 - [discord.py](https://pypi.org/project/discord.py/)
 - [validators](https://pypi.org/project/validators/)
