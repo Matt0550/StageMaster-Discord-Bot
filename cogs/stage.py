@@ -4,16 +4,18 @@ from discord.ext import commands
 import traceback
 import sqlite3
 import validators
+import os.path
 
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "stage.db")
 class voice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.conn = sqlite3.connect('stage.db')
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         guildID = member.guild.id
         c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
         voice=c.fetchone()
@@ -63,8 +65,14 @@ class voice(commands.Cog):
                     await channel2.set_permissions(self.bot.user, connect=True,read_messages=True)
                     await channel2.set_permissions(member, manage_channels=True, mute_members=True, connect=True, move_members=True)
 
+                    embed=discord.Embed(title="Il tuo canale è stato creato!", description="Di seguito una lista di domande frequenti", color=0x36aa27)
+                    embed.add_field(name="Come divento uno speaker?", value='Per diventare speaker basta cliccare il pulsante "Open the Stage"', inline=False)
+                    embed.add_field(name="Come rinomino il canale?", value="Per rinominare il canale, recati nella chat <#828624987757740073> e digita il comando .stage name [nuovo nome]", inline=False)
+                    embed.add_field(name="Come blocco il canale?", value="Per bloccare il canale, recati nella chat <#828624987757740073> e digita il comando .stage lock/unlock", inline=False)
+                    embed.add_field(name="Come cancello il canale?", value="Il canale si cancellerà in automatico appena sarà vuoto", inline=False)
+                    await member.send(embed=embed)
                     c.execute("INSERT INTO voiceChannel VALUES (?, ?)", (id,channelID))
-                    self.conn.commit()
+                    conn.commit()
                     def check(a,b,c):
                         return len(channel2.members) == 0
                     await self.bot.wait_for('voice_state_update', check=check)
@@ -74,7 +82,8 @@ class voice(commands.Cog):
                     c.execute('DELETE FROM voiceChannel WHERE userID=?', (id,))
             except:
                 pass
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @commands.command()
     async def help(self, ctx):
@@ -94,19 +103,10 @@ class voice(commands.Cog):
     async def stage(self, ctx):
         pass
 
-
-    @commands.command()
-    async def info(self, ctx):
-        embed=discord.Embed(title="Info", color=0xb553d0)
-        embed.add_field(name="Author", value="<@319900799197249548>", inline=False)
-        embed.add_field(name="Github", value="https://github.com/Matt0550/", inline=False)
-        embed.add_field(name="Discord", value="https://discord.gg/5WrVyQKWAr", inline=False)
-        embed.set_footer(text='Bot developed by Matt05#6754')
-        await ctx.send(embed=embed)
-
     @stage.command()
     async def setup(self, ctx):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         guildID = ctx.guild.id
         id = ctx.author.id
         if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 319900799197249548:
@@ -139,11 +139,13 @@ class voice(commands.Cog):
                         await ctx.channel.send("You didn't enter the names properly.\nUse `.stage setup` again!")
         else:
             await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @commands.command()
     async def setlimit(self, ctx, num):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 319900799197249548:
             c.execute("SELECT * FROM guildSettings WHERE guildID = ?", (ctx.guild.id,))
             voice=c.fetchone()
@@ -154,7 +156,8 @@ class voice(commands.Cog):
             await ctx.send("You have changed the default channel limit for your server!")
         else:
             await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @setup.error
     async def info_error(self, ctx, error):
@@ -162,7 +165,8 @@ class voice(commands.Cog):
 
     @stage.command()
     async def lock(self, ctx):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
@@ -174,11 +178,13 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, connect=False,read_messages=True)
             await ctx.channel.send(f'{ctx.author.mention} Voice chat locked! 🔒')
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @stage.command()
     async def unlock(self, ctx):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
@@ -190,11 +196,13 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(role, connect=True,read_messages=True)
             await ctx.channel.send(f'{ctx.author.mention} Voice chat unlocked! 🔓')
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @stage.command(aliases=["allow"])
     async def permit(self, ctx, member : discord.Member):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
@@ -205,11 +213,13 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channelID)
             await channel.set_permissions(member, connect=True)
             await ctx.channel.send(f'{ctx.author.mention} You have permited {member.name} to have access to the channel. ✅')
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @stage.command(aliases=["deny"])
     async def reject(self, ctx, member : discord.Member):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         guildID = ctx.guild.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -227,12 +237,14 @@ class voice(commands.Cog):
                     await member.move_to(channel2)
             await channel.set_permissions(member, connect=False,read_messages=True)
             await ctx.channel.send(f'{ctx.author.mention} You have rejected {member.name} from accessing the channel. ❌')
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
 
     @stage.command()
     async def limit(self, ctx, limit):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
@@ -249,12 +261,14 @@ class voice(commands.Cog):
                 c.execute("INSERT INTO userSettings VALUES (?, ?, ?)", (id,f'{ctx.author.name}',limit))
             else:
                 c.execute("UPDATE userSettings SET channelLimit = ? WHERE userID = ?", (limit, id))
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
 
     @stage.command()
     async def name(self, ctx,*, name):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
         voice=c.fetchone()
@@ -271,12 +285,14 @@ class voice(commands.Cog):
                 c.execute("INSERT INTO userSettings VALUES (?, ?, ?)", (id,name,0))
             else:
                 c.execute("UPDATE userSettings SET channelName = ? WHERE userID = ?", (name, id))
-        self.conn.commit()
+        conn.commit()
+        conn.close()
 
     @stage.command()
     async def claim(self, ctx):
         x = False
-        c = self.conn.cursor()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
         channel = ctx.author.voice.channel
         if channel == None:
             await ctx.channel.send(f"{ctx.author.mention} you're not in a voice channel.")
@@ -295,7 +311,8 @@ class voice(commands.Cog):
                 if x == False:
                     await ctx.channel.send(f"{ctx.author.mention} You are now the owner of the channel!")
                     c.execute("UPDATE voiceChannel SET userID = ? WHERE voiceID = ?", (id, channel.id))
-            self.conn.commit()
+            conn.commit()
+            conn.close()
 
 def setup(bot):
     bot.add_cog(voice(bot))
