@@ -51,3 +51,8 @@ For help join to [my discord](https://discord.gg/5WrVyQKWAr) (ON MAINTENANCE)
 Or open an [issue here on Github](https://github.com/Matt0550/StageMaster-Discord-Bot/issues)
 
 Or contact me here [https://help.matt05.ml](https://help.matt05.ml)
+
+# VoiceMaster
+I made another version that instead of creating stage channels, it creates vocal channels
+
+[VoiceMaster-Discord-Bot](https://github.com/Matt0550/VoiceMaster-Discord-Bot)
