@@ -33,7 +33,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 
 4. Open `bot.py` in a text editor and replace `"Insert Discord token here"` with your token bot
 
-5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 114 and 151)
+5. Open `cogs/stage.py` in a text editor and replace the first 3 variable
 
 6. Run the bot
 
@@ -44,7 +44,7 @@ For setup bot use `.stage setup` command
 For the command list use `.help` command
 
 # Help
-For help join to [my discord](https://discord.gg/5WrVyQKWAr) (ON MAINTENANCE)
+For help join to [my discord](https://discord.gg/5WrVyQKWAr)
 
 Or open an [issue here on Github](https://github.com/Matt0550/StageMaster-Discord-Bot/issues)
 
