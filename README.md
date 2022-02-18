@@ -14,8 +14,6 @@
 The original code was taken from the [VoiceMaster bot](https://github.com/SamSanai/VoiceMaster-Discord-Bot) and adapted to my needs.
 
 _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/) and it's tested with Python 3.9_
-# Demo
-![image](https://user-images.githubusercontent.com/65899974/153197642-a8bdafe0-bc57-42f0-bffb-4f503c54b900.png)
 # Requirements
 - [discord.py](https://pypi.org/project/discord.py/)
 - [validators](https://pypi.org/project/validators/)
@@ -35,7 +33,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 
 4. Open `bot.py` in a text editor and replace `"Insert Discord token here"` with your token bot
 
-5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 12)
+5. Open `cogs/stage.py` in a text editor and replace `"Owner id"` with your owner id (line 114 and 151)
 
 6. Run the bot
 
@@ -51,8 +49,3 @@ For help join to [my discord](https://discord.gg/5WrVyQKWAr) (ON MAINTENANCE)
 Or open an [issue here on Github](https://github.com/Matt0550/StageMaster-Discord-Bot/issues)
 
 Or contact me here [https://help.matt05.ml](https://help.matt05.ml)
-
-# VoiceMaster
-I made another version that instead of creating stage channels, it creates vocal channels
-
-[VoiceMaster-Discord-Bot](https://github.com/Matt0550/VoiceMaster-Discord-Bot)
