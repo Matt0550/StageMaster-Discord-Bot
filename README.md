@@ -9,6 +9,9 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/Matt0550/StageMaster-Discord-Bot?style=social)](https://github.com/Matt0550/StageMaster-Discord-Bot/stargazers)
 # StageMaster
 
+> [!WARNING]
+> This project is no longer maintained.
+
 **StageMaster is a discord bot** created to change the way servers work, instead of having permanent channels you can now create temporary ones that delete themselves once they are empty.
 
 The original code was taken from the [VoiceMaster bot](https://github.com/SamSanai/VoiceMaster-Discord-Bot) and adapted to my needs.
@@ -18,7 +21,7 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 > :warning: **USE PYTHON 3.9.X**: or doesn't work!
 # Requirements
 - [discord.py](https://pypi.org/project/discord.py/)
-- [validators](https://pypi.org/project/validators/)
+
 # Setup the bot:
 
 1. Download python using the following link:
@@ -33,11 +36,9 @@ _The bot is programmed via [**discord.py**](https://pypi.org/project/discord.py/
 
 - `pip install -r requirements.txt`
 
-4. Open `bot.py` in a text editor and replace `"Insert Discord token here"` with your token bot
+4. Rename .env.example to .env and fill in the required fields
 
-5. Open `cogs/stage.py` in a text editor and replace the first 3 variable
-
-6. Run the bot
+5. Run the bot
 
 **Remember to enable the "PRESENCE INTENT" and "SERVER MEMBERS INTENT" on [Discord Devolper Portal](https://discord.com/developers/applications/)**
 # Usage
@@ -50,4 +51,4 @@ For help join to [my discord](https://discord.gg/S87HpxGCvx)
 
 Or open an [issue here on Github](https://github.com/Matt0550/StageMaster-Discord-Bot/issues)
 
-Or contact me here [https://help.matt05.ml](https://help.matt05.ml)
+Or contact me here [mailto:me@matteosillitti.com](mailto:me@matteosillitti.com)

@@ -1,18 +1,31 @@
 import discord
 import asyncio
 from discord.ext import commands
-import traceback
 import sqlite3
-from numpy import empty
 import validators
 import os.path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "sqlite.db")
 
-USER_ROLE_ID = INSERT ROLE ID HERE
-STAFF_ROLE_ID = INSERT ROLE ID HERE
-OWNER_ID = INSERT ID HERE
+USER_ROLE_ID = os.getenv("USER_ROLE_ID", "")
+STAFF_ROLE_ID = os.getenv("STAFF_ROLE_ID", "")
+OWNER_ID = os.getenv("OWNER_ID", "")
+
+if not USER_ROLE_ID:
+    print("USER_ROLE_ID not found in .env file")
+    exit()
+
+if not STAFF_ROLE_ID:
+    print("STAFF_ROLE_ID not found in .env file")
+    exit()
+
+if not OWNER_ID:
+    print("OWNER_ID not found in .env file")
+    exit()
 class stage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -36,7 +49,6 @@ class stage(commands.Cog):
                         if cooldown is None:
                             pass
                         else:
-                            print('[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") is creating channels too quickly (creating channel failed).")
                             await member.send("Creating channels too quickly you've been put on a 15 second cooldown!")
                             await asyncio.sleep(15)
 
@@ -131,9 +143,7 @@ class stage(commands.Cog):
                             print('(' + member.guild.name + ') ' + member.name + ' (id: ' + str(member.id) + ") 's room has been deleted.")
                             print("Channels: "+str(total_rooms-1)+"/"+str(maxChannels))
                         else:
-                            await member.send("Impossibile creare il tuo canale! È stato raggiunto il limite massimo!")
-                            print('[ERROR] (' + ctx.author.guild.name + ') Unable to create a stage channel. Max channels limit reached! (reset configs failed).')
-
+                            await member.send("Unable to create a stage channel. Max channels limit reached!")
                 except:
                     pass
             conn.commit()
@@ -159,75 +169,80 @@ class stage(commands.Cog):
 
     @stage.command()
     async def setup(self, ctx):
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        guildID = ctx.guild.id
-        id = ctx.author.id
-        if ctx.author.id == ctx.guild.owner.id or ctx.author.id == OWNER_ID:
-            def check(m):
-                return m.author.id == ctx.author.id
-            print('\n[SETUP] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") has started the setup.")
-            await ctx.channel.send("**You have 60 seconds to answer each question!**")
-            await ctx.channel.send(f"Enter the __name of the category__ you wish to create the channels in: (e.g `Stage Channels`)")
-            try:
-                category = await self.bot.wait_for('message', check=check, timeout = 60.0)
-            except asyncio.TimeoutError:
-                await ctx.channel.send('Took too long to answer!')
-                print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") took too long to answer (setup failed).")
-            else:
-                new_cat = await ctx.guild.create_category_channel(category.content)
-                print('[SETUP] (' + ctx.author.guild.name + ") Category's name: " + category.content)
-                await ctx.channel.send('Enter the __name of the stage channel hub__: (e.g `Join To Create`)')
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            guildID = ctx.guild.id
+            id = ctx.author.id
+            if ctx.author.id == ctx.guild.owner.id or ctx.author.id == OWNER_ID:
+                def check(m):
+                    return m.author.id == ctx.author.id
+                print('\n[SETUP] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") has started the setup.")
+                await ctx.channel.send("**You have 60 seconds to answer each question!**")
+                await ctx.channel.send(f"Enter the __name of the category__ you wish to create the channels in: (e.g `Stage Channels`)")
                 try:
-                    channel = await self.bot.wait_for('message', check=check, timeout = 60.0)
+                    category = await self.bot.wait_for('message', check=check, timeout = 60.0)
                 except asyncio.TimeoutError:
                     await ctx.channel.send('Took too long to answer!')
                     print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") took too long to answer (setup failed).")
                 else:
-                    print('[SETUP] (' + ctx.author.guild.name + ") stage channel hub's name: " + channel.content)
-                    await ctx.channel.send('Max channels __number__:')
+                    new_cat = await ctx.guild.create_category_channel(category.content)
+                    print('[SETUP] (' + ctx.author.guild.name + ") Category's name: " + category.content)
+                    await ctx.channel.send('Enter the __name of the stage channel hub__: (e.g `Join To Create`)')
                     try:
-                        maxChannels = await self.bot.wait_for('message', check=check, timeout = 60.0)
+                        channel = await self.bot.wait_for('message', check=check, timeout = 60.0)
                     except asyncio.TimeoutError:
                         await ctx.channel.send('Took too long to answer!')
                         print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") took too long to answer (setup failed).")
                     else:
-                        print('[SETUP] (' + ctx.author.guild.name + ") Max channels: " + maxChannels.content)
-                        await ctx.channel.send("Admin __role's ID__:")
+                        print('[SETUP] (' + ctx.author.guild.name + ") stage channel hub's name: " + channel.content)
+                        await ctx.channel.send('Max channels __number__:')
                         try:
-                            adminRole = await self.bot.wait_for('message', check=check, timeout = 60.0)
-                            print('[SETUP] (' + ctx.author.guild.name + ") Admin role's ID: " + adminRole.content)
-                            c.execute("SELECT * FROM serverSettings WHERE serverID = ?", (guildID,))
-                            stage=c.fetchone()
-                            if stage is None:
-                                c.execute ("INSERT INTO serverSettings VALUES (?, ?, ?)",(guildID,maxChannels.content,adminRole.content))
-                                print('[SETUP] (' + ctx.author.guild.name + ") Created server settings!")
-                            else:
-                                c.execute ("UPDATE serverSettings SET serverID = ?, maxChannels = ?, roleID = ?",(guildID,maxChannels.content,adminRole.content))
-                                print('[SETUP] (' + ctx.author.guild.name + ") Updated server settings!")
-                            
+                            maxChannels = await self.bot.wait_for('message', check=check, timeout = 60.0)
                         except asyncio.TimeoutError:
                             await ctx.channel.send('Took too long to answer!')
                             print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") took too long to answer (setup failed).")
                         else:
+                            print('[SETUP] (' + ctx.author.guild.name + ") Max channels: " + maxChannels.content)
+                            await ctx.channel.send("Admin __role's ID__:")
                             try:
-                                channel = await ctx.guild.create_voice_channel(channel.content, category=new_cat)
-                                c.execute("SELECT * FROM guild WHERE guildID = ? AND ownerID=?", (guildID, id))
+                                adminRole = await self.bot.wait_for('message', check=check, timeout = 60.0)
+                                print('[SETUP] (' + ctx.author.guild.name + ") Admin role's ID: " + adminRole.content)
+                                c.execute("SELECT * FROM serverSettings WHERE serverID = ?", (guildID,))
                                 stage=c.fetchone()
                                 if stage is None:
-                                    c.execute ("INSERT INTO guild VALUES (?, ?, ?, ?)",(guildID,id,channel.id,new_cat.id))
+                                    c.execute ("INSERT INTO serverSettings VALUES (?, ?, ?)",(guildID,maxChannels.content,adminRole.content))
+                                    print('[SETUP] (' + ctx.author.guild.name + ") Created server settings!")
                                 else:
-                                    c.execute ("UPDATE guild SET guildID = ?, ownerID = ?, stageChannelID = ?, stageCategoryID = ? WHERE guildID = ?",(guildID,id,channel.id,new_cat.id, guildID))
-                                await ctx.channel.send("**You are all setup and ready to go!**")
-                                print('\n[SETUP] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") has completed the setup!\n")
-                            except:
-                                await ctx.channel.send("You didn't enter the information properly. Use `.stage setup` again!")
-                                print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") didn't enter the information properly (setup failed).")
-        else:
-            await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
-            print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") is not the owner of the server (setup failed).")
-        conn.commit()
-        conn.close()
+                                    c.execute ("UPDATE serverSettings SET serverID = ?, maxChannels = ?, roleID = ?",(guildID,maxChannels.content,adminRole.content))
+                                    print('[SETUP] (' + ctx.author.guild.name + ") Updated server settings!")
+                                
+                            except asyncio.TimeoutError:
+                                await ctx.channel.send('Took too long to answer!')
+                                print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") took too long to answer (setup failed).")
+                            else:
+                                try:
+                                    channel = await ctx.guild.create_voice_channel(channel.content, category=new_cat)
+                                    c.execute("SELECT * FROM guild WHERE guildID = ? AND ownerID=?", (guildID, id))
+                                    stage=c.fetchone()
+                                    if stage is None:
+                                        c.execute ("INSERT INTO guild VALUES (?, ?, ?, ?)",(guildID,id,channel.id,new_cat.id))
+                                    else:
+                                        c.execute ("UPDATE guild SET guildID = ?, ownerID = ?, stageChannelID = ?, stageCategoryID = ? WHERE guildID = ?",(guildID,id,channel.id,new_cat.id, guildID))
+                                    await ctx.channel.send("**You are all setup and ready to go!**")
+                                    print('\n[SETUP] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") has completed the setup!\n")
+                                except:
+                                    await ctx.channel.send("You didn't enter the information properly. Use `.stage setup` again!")
+                                    print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") didn't enter the information properly (setup failed).")
+            else:
+                await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
+                print('\n[ERROR] (' + ctx.author.guild.name + ') ' + ctx.author.name + ' (id: ' + str(ctx.author.id) + ") is not the owner of the server (setup failed).")
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print("Error:", e)
+            # Send error message to the user
+            await ctx.channel.send("An error occurred while setting up the bot. Please try again later.")
 
     @commands.command()
     async def setlimit(self, ctx, num):

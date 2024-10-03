@@ -1,2 +1,2 @@
-discord.py
-validators
+discord.py==1.7.1
+python-dotenv==1.0.1

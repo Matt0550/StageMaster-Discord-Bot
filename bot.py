@@ -3,12 +3,20 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 import traceback
 import sys
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-bot = commands.Bot(command_prefix=".stage", intents=discord.Intents.all())
+
+bot = commands.Bot(command_prefix=".", intents=discord.Intents.all())
 
 bot.remove_command("help")
 
-DISCORD_TOKEN = 'INSERT DISCORD TOKEN HERE'
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", "")
+
+if not DISCORD_TOKEN:
+    print("Token not found in .env file")
+    exit()
 
 initial_extensions = ['cogs.stage']
 
